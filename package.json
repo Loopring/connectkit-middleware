@@ -5,6 +5,8 @@
   "keywords": [],
   "main": "src/index.tsx",
   "dependencies": {
+    "@loopring-web/loopring-sdk": "^3.2.2",
+    "connectkit": "^1.2.0",
     "loader-utils": "3.2.1",
     "loopring-sdk": "0.0.143",
     "react": "18.2.0",
@@ -16,12 +18,24 @@
   "devDependencies": {
     "@types/react": "18.0.25",
     "@types/react-dom": "18.0.9",
-    "typescript": "4.4.2"
+    "assert": "^2.0.0",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.0",
+    "fs": "^2.0.0",
+    "https-browserify": "^1.0.0",
+    "os": "^0.1.2",
+    "os-browserify": "^0.3.0",
+    "process": "^0.11.10",
+    "react-app-rewired": "^2.2.1",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
+    "typescript": "4.4.2",
+    "url": "^0.11.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
     "eject": "react-scripts eject"
   },
   "browserslist": [
