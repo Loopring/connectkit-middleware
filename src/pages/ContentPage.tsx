@@ -16,8 +16,8 @@ export const ContentPage = ()=>{
     {chain?.name}
     {isConnected  && <div>
       {readyState === AccountStatus.LOCKED && <button onClick={onUnlockAccount}>Unlock</button>}
-      {readyState === AccountStatus.ACTIVATED && <>l2 success unlock <button onClick={onLockAccount}>lock</button></> }
-      {readyState === AccountStatus.NO_ACCOUNT && <p>Please active account</p>}
+      {readyState === AccountStatus.ACTIVATED && <>L2 successfully unlocked <button onClick={onLockAccount}>lock</button></> }
+      {readyState === AccountStatus.NO_ACCOUNT && <p>Please activate account</p>}
       {readyState === AccountStatus.UN_CONNECT && <p>Please connect</p>}
       {readyState === AccountStatus.CHECKING && <p>CHECKING</p>}
     </div>}
