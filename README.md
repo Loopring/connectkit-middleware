@@ -26,6 +26,12 @@ npm run start
 ```
 
 
+## 💻 Demo record:
+
+https://user-images.githubusercontent.com/1582816/225676757-f2be4534-d95e-44d9-b935-ba0e803c674c.mp4
+
+
+
 ## 👉 [What is Loopring?](https://loopring.org/#/)
 
 ## 🫂 Community
