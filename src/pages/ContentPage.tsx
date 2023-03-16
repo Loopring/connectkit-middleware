@@ -8,15 +8,15 @@ export const ContentPage = ()=>{
     onLockAccount,...account}= useLoopringAccount();
   // const account =  l2Account.l2Account;
   const {isConnected,readyState} = account;
-  const system = useSystem();
-  const chainName = system.system?.chain?.name;
-  console.log(chainName,account,account,readyState)
+  const {system} = useSystem();
+  const {chain,exchangeInfo} =system??{};
+  console.log(exchangeInfo,account,account,readyState)
   return <div>
     <div>
        Welcome to Loopring
     </div>
-    {chainName}
-    {isConnected && system?.system?.exchangeInfo && <div>
+    {chain?.name}
+    {isConnected  && <div>
       {readyState === AccountStatus.LOCKED && <button onClick={onUnlockAccount}>Unlock</button>}
       {readyState === AccountStatus.ACTIVATED && <button onClick={onLockAccount}>Unlock</button>}
       {readyState === AccountStatus.NO_ACCOUNT && <p>Please active account</p>}

@@ -1,5 +1,4 @@
 import React from 'react';
-import {  watchNetwork } from '@wagmi/core';
 import { system } from './make/makeSystem';
 import { ConnectProvides } from './make/providers';
   

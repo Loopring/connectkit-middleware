@@ -109,21 +109,8 @@ export const useLoopringAccount = () => {
       apiKey: undefined as any,
       eddsaKey: undefined as any,
       readyState: AccountStatus.LOCKED,
-      // isInCounterFactualStatus: walletType?.isInCounterFactualStatus,
-      // isContract: walletType?.isContract,
-      // readyState: AccountStatus.ACTIVATED,
-      // counterFactualInfo
     })
-    // setAccountInfo((state) => {
-    //   return {
-    //     ...state,
-    //     apiKey: undefined as any,
-    //     eddsaKey: undefined as any,
-    //     readyState: AccountStatus.LOCKED
-    //   }
-    // })
   }
-  // console.log('use',l2Account.l2Account)
   React.useEffect(() => {
     setAccountInfo(l2Account.l2Account);
   }, [l2Account.l2Account, l2Account.l2Account?.readyState])
