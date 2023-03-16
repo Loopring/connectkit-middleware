@@ -1,6 +1,8 @@
 import * as sdk from '@loopring-web/loopring-sdk'
 import * as _wagmi_core from '@wagmi/core';
 import { LoopringAPI } from '../../api_wrapper';
+import { l2Account } from './makeL2Account';
+import { connectSubject } from './providers';
 
 
 class System {
@@ -22,7 +24,14 @@ class System {
         exchangeInfo,
         chainId: network.chain?.id as sdk.ChainId
       }
+      connectSubject.next({
+        status:'update',
+        data: {
+          system: this._system,
+        },
+      });
     }
+
 
   }
 }

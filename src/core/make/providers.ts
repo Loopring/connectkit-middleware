@@ -1,5 +1,5 @@
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
-import { configureChains, mainnet, createClient, goerli } from "wagmi";
+import { configureChains, mainnet, createClient, goerli, useSigner } from "wagmi";
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
@@ -24,7 +24,7 @@ import { Subject } from "rxjs";
 const POLLING_INTERVAL = 12000;
 const DEFAULT_HTTPS_BRIDGE = "https://bridge.walletconnect.org";
 const DEFAULT_WEBSOCKET_BRIDGE = "wss://bridge.walletconnect.org";
- const subject = new Subject<{
+export const connectSubject = new Subject<{
   status: any;
   data?:any;
 }>();
@@ -53,8 +53,8 @@ export class ConnectProvides {
   public get usedProvide() {
     return this._usedProvide
   }
-  public static  subscribe(){
-    return subject.asObservable()
+  public static subscribe(){
+    return connectSubject.asObservable()
   }
 
 
@@ -101,34 +101,28 @@ export class ConnectProvides {
         }
         const account = getAccount();
         await l2Account.makeL2Account(account,network?.chain?.id??1)
-        subject.next({
-          status:'update',
-          data: {
-            system:system.system,
-            l2Account:l2Account.l2Account
-          },
-        });
+
       }),
       watchAccount(async (account) => {
         console.log('watchAccount account',account)
         const network = getNetwork();
+        const provider = account?.connector?.options.getProvider();
+        if(provider){
+          this._usedProvide = provider;
+          this._usedWeb3 = new Web3(this._usedProvide as any);
+        }
         await l2Account.makeL2Account(account,network?.chain?.id??1)
         console.log('watchAccount account after',l2Account.l2Account);
-        subject.next({
-          status:'update',
-          data: {
-            l2Account:l2Account.l2Account
-          },
-        });
-
       })];
+    
+
     // const network =  getNetwork();
-    const provider = getProvider();
-    console.log('connect provider',provider)
-    if(provider){
-      this._usedProvide = provider as any;
-      this._usedWeb3 = new Web3(provider as any);
-    }
+    // const provider = getProvider({chainId:network?.chain?.id??1});
+    // const signer = await fetchSigner()
+    // console.log('connect provider',network)
+
+
+
   }
   async afterDisConnectDo(){
     this.unwatchs?.forEach((unwatch)=>{

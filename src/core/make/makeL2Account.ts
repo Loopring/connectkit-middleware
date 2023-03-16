@@ -2,6 +2,7 @@ import * as _wagmi_core from '@wagmi/core';
 import { GetAccountResult } from '@wagmi/core';
 import { LoopringAPI } from '../../api_wrapper';
 import { Account, AccountStatus } from '../../contant';
+import { connectSubject } from './providers';
 
 
 class L2Account {
@@ -21,6 +22,14 @@ class L2Account {
       ...this._l2Account,
       ...account,
     } as any;
+
+    connectSubject.next({
+      status:'update',
+      data: {
+        l2Account:this._l2Account
+      },
+    });
+    console.log(this._l2Account);
   }
 
   // @ts-ignore
@@ -75,7 +84,12 @@ class L2Account {
       ...this._l2Account,
       ..._accountInfo,
     } as any
-
+    connectSubject.next({
+      status:'update',
+      data: {
+        l2Account:this._l2Account
+      },
+    });
     console.log("_l2Account",this.l2Account)
   }
 

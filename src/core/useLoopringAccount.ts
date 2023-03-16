@@ -7,6 +7,8 @@ import { ConnectProvides, connectProvides } from './make/providers';
 import React from 'react';
 import { useSystem } from './useSystem';
 import { l2Account } from './make/makeL2Account';
+import { getProvider } from '@wagmi/core';
+import Web3 from 'web3';
 
 
 export const useLoopringAccount = () => {
@@ -18,11 +20,8 @@ export const useLoopringAccount = () => {
   React.useEffect(()=>{
     const subscription = subject.subscribe(({data:{l2Account}}) => {
       if(l2Account){
-        setAccountInfo(()=>{
-          return {
-            ...l2Account,
-          }
-        })
+        console.log('subscribe l2Account',l2Account)
+        setAccountInfo(l2Account)
       }
     });
     return () => {
@@ -34,20 +33,16 @@ export const useLoopringAccount = () => {
     console.log('onUnlockAccount');
     if (exchangeInfo?.exchangeAddress && accountInfo && accountInfo.nonce !== undefined && accountInfo.accountId) {
       const connectName = sdk.ConnectorNames[ (account.connector?.name ?? sdk.ConnectorNames.Unknown) as sdk.ConnectorNames ];
+      console.log('onUnlockAccount',connectName);
       const walletTypePromise: Promise<{ walletType: any }> =
         window.ethereum &&
         connectName === sdk.ConnectorNames.MetaMask
-          // &&isMobile
           ? Promise.resolve({walletType: undefined})
           : LoopringAPI.walletAPI.getWalletType({
             wallet: account.address as string,
           });
       const [
-        // { accInfo }
         {walletType}] = await Promise.all([
-        // LoopringAPI.exchangeAPI.getAccount({
-        //   owner: account.address,
-        // }),
         walletTypePromise,
       ])
         .then((response) => {
@@ -68,25 +63,44 @@ export const useLoopringAccount = () => {
             "${exchangeAddress}",
             exchangeInfo.exchangeAddress
           ).replace("${nonce}", (nonce - 1).toString());
-
+      console.log('onUnlockAccount msg',msg,connectProvides.usedWeb3,connectProvides.usedProvide);
       try {
         const response = await LoopringAPI.userAPI.unLockAccount(
           {
             keyPair: {
-              web3: connectProvides.usedWeb3,
-              address: account.address as string,
+              web3: connectProvides.usedWeb3 as unknown as Web3,
+              address:  account.address as string,
               keySeed: msg,
               walletType: connectName,
-              chainId: exchangeInfo.chainId,
+              chainId:exchangeInfo.chainId,
               accountId: accountInfo.accountId,
               isMobile: false, //todo flag for is mobile
             },
             request: {
-              accountId: accountInfo.accountId,
+              accountId:  accountInfo.accountId,
             },
           },
           accountInfo?.publicKey as any
         );
+        // const provider = getProvider();
+        // const web3 = new Web3()
+        // const response = await LoopringAPI.userAPI.unLockAccount(
+        //   {
+        //     keyPair: {
+        //       web3: connectProvides.usedWeb3,
+        //       address: account.address as string,
+        //       keySeed: msg,
+        //       walletType: connectName,
+        //       chainId: exchangeInfo.chainId,
+        //       accountId: accountInfo.accountId,
+        //       isMobile: false, //todo flag for is mobile
+        //     },
+        //     request: {
+        //       accountId: accountInfo.accountId,
+        //     },
+        //   },
+        //   accountInfo?.publicKey as any
+        // );
         const {apiKey, eddsaKey, counterFactualInfo} = response as any;
         if (apiKey && eddsaKey) {
           l2Account.updateL2Account({
@@ -101,7 +115,6 @@ export const useLoopringAccount = () => {
             readyState: AccountStatus.ACTIVATED,
             counterFactualInfo
           })
-
         }
       } catch (error) {
         console.log('error', error)
