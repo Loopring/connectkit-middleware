@@ -90,6 +90,7 @@ class L2Account {
         l2Account:this._l2Account
       },
     });
+    return l2Account.makeL2Account
     console.log("_l2Account",this.l2Account)
   }
 

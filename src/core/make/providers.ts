@@ -1,5 +1,5 @@
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
-import { configureChains, mainnet, createClient, goerli, useSigner } from "wagmi";
+import { configureChains, mainnet, createClient, goerli } from "wagmi";
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
@@ -8,12 +8,13 @@ import Web3 from "web3";
 import { WalletConnectLegacyConnector } from "wagmi/connectors/walletConnectLegacy";
 import { ChainId } from "loopring-sdk";
 import { provider as TypeProviders } from 'web3-core';
-import { watchAccount, watchNetwork, getProvider, getNetwork, getAccount } from '@wagmi/core'
+import { watchAccount, watchNetwork, getNetwork, getAccount } from '@wagmi/core'
 import { LoopringAPI } from '../../api_wrapper';
 import { getDefaultClient } from 'connectkit';
 import { system } from './makeSystem';
 import { l2Account } from './makeL2Account';
 import { Subject } from "rxjs";
+import { getRandomInt } from 'loopring-sdk/dist/api/sign/exchange';
 
 
 
@@ -104,9 +105,14 @@ export class ConnectProvides {
 
       }),
       watchAccount(async (account) => {
-        console.log('watchAccount account',account)
+        console.log('watchAccount account',account,account?.connector instanceof WalletConnectConnector)
         const network = getNetwork();
-        const provider = account?.connector?.options.getProvider();
+        let provider;
+        if( account?.connector instanceof WalletConnectConnector){
+           provider = (await account?.connector?.getProvider());
+        }else{
+          provider = account?.connector?.options?.getProvider();
+        }
         if(provider){
           this._usedProvide = provider;
           this._usedWeb3 = new Web3(this._usedProvide as any);
@@ -183,15 +189,17 @@ const withLoopringBridge = async ({
           return DEFAULT_HTTPS_BRIDGE;
         })) ?? DEFAULT_HTTPS_BRIDGE;
     return new WalletConnectLegacyConnector({
+      chains: [mainnet, goerli],
       options: {
         rpc: RPC_URLS,
         bridge: BRIDGE_URL,
         chainId: 1,
+        qrcode: true,
         clientMeta: {
-          description: 'ConnectKit Loopring',
+          name: 'ConnectKit Loopring',
+          description: "Loopring Dapp",
           url: "https://loopring.org",
           icons: ["https://static.loopring.io/assets/svg/loopring.svg"],
-          name: "LRC"
 
         }
       }
@@ -237,8 +245,8 @@ export const configProvider = async () => {
   );
 
   const bridge = await withLoopringBridge({ isBridge: true });
-  // const legacyBridge = await withLoopringBridge({ isLegacyBridge: true })
-
+  const legacyBridge = await withLoopringBridge({ isLegacyBridge: true })
+  console.log(legacyBridge)
   const  connectors:any[] = [
     new MetaMaskConnector({ chains }),
     new CoinbaseWalletConnector({
@@ -247,8 +255,9 @@ export const configProvider = async () => {
         appName: 'loopring',
       },
     }),
-    new InjectedConnector({ chains }),
+    // new InjectedConnector({ chains }),
     bridge,
+    legacyBridge,
   ];
   // console.log(provider,connectors,provider)
 
