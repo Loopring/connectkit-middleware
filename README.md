@@ -28,7 +28,7 @@ npm run start
 
 ## 💻 Demo record:
 
-https://user-images.githubusercontent.com/1582816/225676757-f2be4534-d95e-44d9-b935-ba0e803c674c.mp4
+![connectkit](https://user-images.githubusercontent.com/1582816/225681756-c1592166-82a7-499a-a82e-8c2d21b395dd.gif)
 
 
 
