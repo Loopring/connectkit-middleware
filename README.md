@@ -26,6 +26,12 @@ npm run start
 ```
 
 
+## 💻 Demo record:
+
+![connectkit](https://user-images.githubusercontent.com/1582816/225681756-c1592166-82a7-499a-a82e-8c2d21b395dd.gif)
+
+
+
 ## 👉 [What is Loopring?](https://loopring.org/#/)
 
 ## 🫂 Community
