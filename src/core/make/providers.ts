@@ -99,10 +99,13 @@ export class ConnectProvides {
           LoopringAPI.nftAPI?.setBaseUrl(baseURL);
           LoopringAPI.delegate?.setBaseUrl(baseURL);
         }
+        const account = getAccount();
+        await l2Account.makeL2Account(account,network?.chain?.id??1)
         subject.next({
           status:'update',
           data: {
             system:system.system,
+            l2Account:l2Account.l2Account
           },
         });
       }),

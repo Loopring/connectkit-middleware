@@ -11,21 +11,27 @@ import { l2Account } from './make/makeL2Account';
 
 export const useLoopringAccount = () => {
   const account = useAccount();
+  const {exchangeInfo} = useSystem();
+
   const [accountInfo, setAccountInfo] = React.useState<any>(l2Account);
   const subject = React.useMemo(() => ConnectProvides.subscribe(), []);
   React.useEffect(()=>{
-    const subscription = subject.subscribe((props) => {
-      console.log('useL2Account',props)
-      setAccountInfo(l2Account)
+    const subscription = subject.subscribe(({data:{l2Account}}) => {
+      if(l2Account){
+        setAccountInfo(()=>{
+          return {
+            ...l2Account,
+          }
+        })
+      }
     });
     return () => {
       subscription.unsubscribe();
     };
   },[])
-  const system =useSystem();
   const onUnlockAccount = async () => {
-    const accountInfo = l2Account.l2Account;
-    const exchangeInfo = system.system?.exchangeInfo;
+    // const accountInfo = l2Account.l2Account;
+    console.log('onUnlockAccount');
     if (exchangeInfo?.exchangeAddress && accountInfo && accountInfo.nonce !== undefined && accountInfo.accountId) {
       const connectName = sdk.ConnectorNames[ (account.connector?.name ?? sdk.ConnectorNames.Unknown) as sdk.ConnectorNames ];
       const walletTypePromise: Promise<{ walletType: any }> =
@@ -111,9 +117,9 @@ export const useLoopringAccount = () => {
       readyState: AccountStatus.LOCKED,
     })
   }
-  React.useEffect(() => {
-    setAccountInfo(l2Account.l2Account);
-  }, [l2Account.l2Account, l2Account.l2Account?.readyState])
+  // React.useEffect(() => {
+  //   setAccountInfo(l2Account.l2Account);
+  // }, [l2Account.l2Account, l2Account.l2Account?.readyState])
   return {
     // setAccountInfo,
     onUnlockAccount,

@@ -5,12 +5,10 @@ import { useSystem } from '../core/useSystem';
 
 export const ContentPage = ()=>{
   const {onUnlockAccount,
-    onLockAccount,...account}= useLoopringAccount();
+    onLockAccount,readyState,isConnected,...account}= useLoopringAccount();
   // const account =  l2Account.l2Account;
-  const {isConnected,readyState} = account;
-  const {system} = useSystem();
-  const {chain,exchangeInfo} =system??{};
-  console.log(exchangeInfo,account,account,readyState)
+  const {chain} = useSystem();
+  console.log(isConnected,chain,account,readyState)
   return <div>
     <div>
        Welcome to Loopring
