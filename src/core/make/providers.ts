@@ -14,7 +14,6 @@ import { getDefaultClient } from 'connectkit';
 import { system } from './makeSystem';
 import { l2Account } from './makeL2Account';
 import { Subject } from "rxjs";
-import { getRandomInt } from 'loopring-sdk/dist/api/sign/exchange';
 
 
 
@@ -248,14 +247,21 @@ export const configProvider = async () => {
   const legacyBridge = await withLoopringBridge({ isLegacyBridge: true })
   console.log(legacyBridge)
   const  connectors:any[] = [
-    new MetaMaskConnector({ chains }),
+     new MetaMaskConnector({ chains }),
+    // new InjectedConnector({
+    //   chains,
+    //   options: {
+    //     name: 'gameStop',
+    //     // @ts-ignore
+    //     getProvider: () => typeof window !== 'undefined' ? window.gamestop : undefined
+    //   }
+    // }),
     new CoinbaseWalletConnector({
       chains,
       options: {
         appName: 'loopring',
       },
     }),
-    // new InjectedConnector({ chains }),
     bridge,
     legacyBridge,
   ];
@@ -277,9 +283,22 @@ export const configProvider = async () => {
   })
   // console.log(wagmiClientConfig)
   // wagmiClientConfig.provider.on('')
+  // const wagmiClientConfig = createClient({
+  //   autoConnect: true,
+  //   connectors,
+  //   provider,
+  // })
+  // const wagmiClient = createClient(wagmiClientConfig);
 
-
-  const wagmiClient = createClient(wagmiClientConfig);
+  const wagmiClient = createClient({
+      ...wagmiClientConfig,
+      autoConnect: true,
+      connectors:[
+        // ...wagmiClientConfig?.connectors??[],
+        ...connectors
+      ],
+      provider,
+    });
   // wagmiClient.provider.on("connect", (code: number, reason: string) => {
   //   connectProvides.afterConnectedDo()
   // });
