@@ -18,7 +18,7 @@ export function useConnectHook({
   handleProcessing,
 }: {
   handleProcessing?: (props: {
-    type: keyof typeof ProcessingType;
+    type:  ProcessingType;
     opts: any;
   }) => void;
   handleError?: (props: {
